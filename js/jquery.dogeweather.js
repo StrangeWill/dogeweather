@@ -12,12 +12,9 @@
         ];
 
         function randomFrom(arr){
-        var randomIndex = Math.floor(Math.random() * arr.length);
-        return arr[randomIndex];
+          var randomIndex = Math.floor(Math.random() * arr.length);
+          return arr[randomIndex];
         }
-        
-        //  much array
-        //var tings = $.extend(['doge', 'shibe', 'excite', 'impress', 'skill', 'warn'], tings);
         
         var r = function(arr) {
             if(!arr) arr = tings; return arr[Math.floor(Math.random() * arr.length)];

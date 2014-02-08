@@ -1,5 +1,4 @@
 <?php
-
 function get_client_ip() {
      $ipaddress = '';
      if (getenv('HTTP_CLIENT_IP'))
@@ -19,25 +18,31 @@ function get_client_ip() {
      return $ipaddress; 
 }
 
-$ip = get_client_ip(); // the IP address to query
+// Accept latitude, longitude and location overrides.
+$lat = isset($_GET['lat']) ? $_GET['lat'] : null;
+$lon = isset($_GET['lon']) ? $_GET['lon'] : null;
+$location = isset($_GET['location']) ? $_GET['location'] : null;
 
-//test ip
-//$ip = "180.76.6.19";
-
-$query = @unserialize(file_get_contents('http://ip-api.com/php/'.$ip));
-if($query && $query['status'] == 'success') {
-  //get Coords
-  $lat = $query['lat'];
-  $lon = $query['lon'];
-
-  $url = "http://api.openweathermap.org/data/2.5/weather?lat={$lat}&lon={$lon}";
-
-  	$djson = file_get_contents($url);
-	echo $djson;
-
-} else {
-  	$url = "http://api.openweathermap.org/data/2.5/weather?q=Paris";
-  	$djson = file_get_contents($url);
-	echo $djson;
+if(($lat == null || $lon == null) && $location == null)
+{
+  $ip = isset($_GET['ip']) ? $_GET['ip'] : get_client_ip(); // the IP address to query
+  $query = @unserialize(file_get_contents('http://ip-api.com/php/'.$ip));
+  if($query && $query['status'] == 'success') {
+    $lat = $query['lat'];
+    $lon = $query['lon'];
+  }
 }
+
+if($lat == 0 && $lon == 0 && $location == null) {
+  $location = 'Paris';
+}
+
+if($location != null) {
+  $url = "http://api.openweathermap.org/data/2.5/weather?q={$location}";
+} else {
+  $url = "http://api.openweathermap.org/data/2.5/weather?lat={$lat}&lon={$lon}";
+}
+
+$djson = file_get_contents($url);
+echo $djson;
 ?>
